@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import connectToDatabase from '../../../../lib/dbConnect';
 import User from '../../../../models/User';
+import nodemailer from 'nodemailer';
 
 export async function POST(req: Request) {
   try {
@@ -30,11 +31,31 @@ export async function POST(req: Request) {
     const user = new User({
       email,
       password: hashedPassword,
+      emailVerified: false, // Ensure the user is marked as unverified
     });
 
     await user.save();
 
-    return NextResponse.json({ message: 'User created successfully' });
+    // Trigger email verification
+    const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/verify-email?token=${user._id}`;
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_SERVER_HOST,
+      port: Number(process.env.EMAIL_SERVER_PORT),
+      auth: {
+        user: process.env.EMAIL_SERVER_USER,
+        pass: process.env.EMAIL_SERVER_PASSWORD,
+      },
+    });
+
+    await transporter.sendMail({
+      to: email,
+      from: process.env.EMAIL_FROM,
+      subject: 'Verify your email',
+      text: `Please verify your email by clicking the following link: ${verificationUrl}`,
+      html: `<p>Please verify your email by clicking the following link:</p><p><a href="${verificationUrl}">Verify Email</a></p>`,
+    });
+
+    return NextResponse.json({ message: 'User created successfully. Please check your email to verify your account.' });
   } catch (error) {
     console.error('Error creating user:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

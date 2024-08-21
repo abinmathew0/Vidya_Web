@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -12,7 +13,7 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const response = await fetch('/api/auth/signup', {
       method: 'POST',
       headers: {
@@ -24,8 +25,8 @@ export default function SignUpPage() {
     const data = await response.json();
 
     if (response.ok) {
-      // Redirect to signin page or home page
-      router.push('/auth/signin');
+      // Redirect to the verify email page
+      router.push('/auth/verify-email');
     } else {
       setError(data.error || 'Signup failed');
     }
