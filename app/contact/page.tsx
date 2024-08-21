@@ -6,14 +6,31 @@ export default function ContactPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [status, setStatus] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission (e.g., send to an API or email service)
-    console.log('Message sent:', { name, email, message });
-    setName('');
-    setEmail('');
-    setMessage('');
+    setStatus('Sending...');
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      if (response.ok) {
+        setStatus('Message sent successfully!');
+        setName('');
+        setEmail('');
+        setMessage('');
+      } else {
+        setStatus('Failed to send the message.');
+      }
+    } catch (error) {
+      setStatus('Error sending the message.');
+    }
   };
 
   return (
@@ -24,6 +41,7 @@ export default function ContactPage() {
           I'd love to hear from you! Whether you have a question, a project in mind, or just want to connect, feel free to reach out using the form below.
         </p>
         <form onSubmit={handleSubmit} className="w-full max-w-md">
+          {status && <p className="mb-4 text-darkRed">{status}</p>}
           <div className="mb-4">
             <label htmlFor="name" className="block text-darkRed text-sm font-bold mb-2">
               Name
