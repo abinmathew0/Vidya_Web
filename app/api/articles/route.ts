@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]/route';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
@@ -22,8 +23,16 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const session = await getSession({ req });
-  if (!session || session.user.role !== 'author') {
+  // Convert the Request object to one that getServerSession can use
+  const session = await getServerSession({
+    req: {
+      headers: Object.fromEntries(req.headers),
+      cookies: Object.fromEntries(req.headers.get('cookie')?.split('; ').map(cookie => cookie.split('=')) || []),
+    },
+    ...authOptions,
+  });
+
+  if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

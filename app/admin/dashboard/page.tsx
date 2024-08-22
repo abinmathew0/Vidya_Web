@@ -35,7 +35,7 @@ export default function AdminDashboard() {
             Manage Users
           </button>
           <button
-            onClick={() => router.push('/admin/manage-articles')}
+            onClick={() => router.push('/admin/articles')}
             className="bg-darkRed text-lightCream mr-2 px-4 py-2 rounded hover:bg-burntOrange transition duration-300"
           >
             Manage Articles

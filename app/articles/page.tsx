@@ -1,44 +1,59 @@
 import fs from 'fs';
 import path from 'path';
-import Link from 'next/link';
 import matter from 'gray-matter';
-import Loading from '../components/Loading';
-import { Suspense } from 'react';
+import Link from 'next/link';
+import ArticleCard from '../components/ArticleCard';
 
 interface Article {
   slug: string;
   title: string;
   date: string;
+  excerpt: string;
 }
 
-export default async function Articles() {
-  const files = fs.readdirSync(path.join('content/articles'));
-  const articles: Article[] = files.map((filename) => {
-    const markdownWithMeta = fs.readFileSync(path.join('content/articles', filename), 'utf-8');
-    const { data: frontmatter } = matter(markdownWithMeta);
-
-    return {
-      slug: filename.replace('.md', ''),
-      title: frontmatter.title,
-      date: frontmatter.date,
-    };
-  });
+export default function Articles() {
+  const articles = getArticles();
 
   return (
-    <Suspense fallback={<Loading />}>
-      <div className="container mx-auto p-4">
-        <h1 className="text-4xl font-bold mb-4">Articles</h1>
-        <ul>
-          {articles.map((article) => (
-            <li key={article.slug} className="mb-4">
-              <Link href={`/articles/${article.slug}`} className="text-blue-500">
-                {article.title}
-              </Link>
-              <p>{article.date}</p>
-            </li>
-          ))}
-        </ul>
+    <div className="min-h-screen container mx-auto px-4 py-6 bg-lightCream mt-16"> {/* Added mt-16 for top spacing */}
+      <h1 className="text-4xl font-extrabold text-darkRed mb-6 text-center">Articles</h1>
+      <div className="flex flex-col items-center gap-6"> {/* Center-aligns the articles */}
+        {articles.map((article) => (
+          <Link
+            key={article.slug}
+            href={`/articles/${article.slug}`}
+            className="block w-10/12 lg:w-8/12 xl:w-7/12 transform hover:scale-105 transition-transform duration-300" // Width set to 70% on larger screens
+          >
+            <ArticleCard
+              slug={article.slug}
+              title={article.title}
+              date={article.date}
+              excerpt={article.excerpt}
+            />
+          </Link>
+        ))}
       </div>
-    </Suspense>
+    </div>
   );
+}
+
+// Server-side data fetching function for articles
+function getArticles(): Article[] {
+  const files = fs.readdirSync(path.join('content/articles'));
+  const articles: Article[] = files
+    .filter((filename) => !filename.includes('-comments')) // Ignore comment files
+    .map((filename) => {
+      const markdownWithMeta = fs.readFileSync(path.join('content/articles', filename), 'utf-8');
+      const { data: frontmatter, content } = matter(markdownWithMeta);
+      const excerpt = content.split('\n').slice(0, 3).join(' ') + '...';
+
+      return {
+        slug: filename.replace('.md', ''),
+        title: frontmatter.title,
+        date: frontmatter.date,
+        excerpt,
+      };
+    });
+
+  return articles;
 }

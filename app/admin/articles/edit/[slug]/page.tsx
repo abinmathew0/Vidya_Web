@@ -12,12 +12,12 @@ export default function EditArticle() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!session || session.user.role !== 'author') {
+    if (!session || session.user.role !== 'admin') {
       router.push('/auth/signin');
     } else {
       fetch(`/api/articles/${slug}`)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           setTitle(data.frontmatter.title);
           setContent(data.content);
         });
@@ -42,7 +42,7 @@ export default function EditArticle() {
     }
   };
 
-  if (!session || session.user.role !== 'author') {
+  if (!session || session.user.role !== 'admin') {
     return <p>Unauthorized</p>;
   }
 

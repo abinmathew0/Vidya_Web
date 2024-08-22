@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 interface LikeButtonProps {
@@ -7,9 +9,9 @@ interface LikeButtonProps {
 export default function LikeButton({ initialLikes }: LikeButtonProps) {
   const [likes, setLikes] = useState(initialLikes);
 
-  const handleLike = () => {
+  const handleLike = async () => {
     setLikes(likes + 1);
-    // You can also send this data to the server to persist it
+    // Add code here to persist the like count to the server
   };
 
   return (

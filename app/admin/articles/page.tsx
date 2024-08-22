@@ -6,22 +6,26 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 export default function ArticleManagement() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
-    if (!session || session.user.role !== 'author') {
-      router.push('/auth/signin');
-    } else {
-      // Fetch articles for the author
-      fetch('/api/articles')
-        .then(res => res.json())
-        .then(data => setArticles(data));
-    }
-  }, [session, router]);
+    if (status === 'loading') return; // Prevent redirect while loading session data
 
-  if (!session) return null;
+    if (!session || session.user.role !== 'admin') {
+      router.push('/auth/signin'); // Redirect to sign-in if not admin
+    } else {
+      // Fetch articles only if session is valid and user is admin
+      fetch('/api/articles')
+        .then((res) => res.json())
+        .then((data) => setArticles(data));
+    }
+  }, [status, session, router]);
+
+  if (status === 'loading') return <div>Loading...</div>; // Show loading spinner while session is being fetched
+
+  if (!session || session.user.role !== 'admin') return null; // Prevent rendering for non-admin users
 
   return (
     <div className="container mx-auto p-4">
@@ -30,7 +34,7 @@ export default function ArticleManagement() {
         Create New Article
       </Link>
       <ul>
-        {articles.map(article => (
+        {articles.map((article) => (
           <li key={article.slug} className="mb-4">
             <Link href={`/admin/articles/edit/${article.slug}`} className="text-blue-500">
               {article.frontmatter.title}

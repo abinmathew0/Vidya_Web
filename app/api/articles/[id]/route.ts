@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../auth/[...nextauth]/route';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
-export async function GET(req: Request) {
-  const { id } = req.params;
-  const filePath = path.join('content/articles', `${id}.md`);
+// Utility function to handle file operations
+const getArticlePath = (slug: string) => path.join('content/articles', `${slug}.md`);
+
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+  const { id } = params;
+  const filePath = getArticlePath(id);
 
   if (fs.existsSync(filePath)) {
     const markdownWithMeta = fs.readFileSync(filePath, 'utf-8');
@@ -22,16 +26,18 @@ export async function GET(req: Request) {
   }
 }
 
-export async function POST(req: Request) {
-  const session = await getSession({ req });
-  if (!session || session.user.role !== 'author') {
+export async function POST(request: Request, { params }: { params: { id: string } }) {
+  // Extract session using the getServerSession by providing headers.
+  const session = await getServerSession(authOptions);
+
+  if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { id } = req.params;
-  const { title, content } = await req.json();
+  const { id } = params;
+  const { title, content } = await request.json();
+  const filePath = getArticlePath(id);
 
-  const filePath = path.join('content/articles', `${id}.md`);
   if (fs.existsSync(filePath)) {
     const markdownContent = `---
 title: "${title}"
@@ -46,14 +52,15 @@ ${content}`;
   }
 }
 
-export async function DELETE(req: Request) {
-  const session = await getSession({ req });
-  if (!session || session.user.role !== 'author') {
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || session.user.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { id } = req.params;
-  const filePath = path.join('content/articles', `${id}.md`);
+  const { id } = params;
+  const filePath = getArticlePath(id);
 
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath);
