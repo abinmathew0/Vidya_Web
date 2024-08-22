@@ -2,7 +2,8 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
+import Loading from '../../components/Loading';
 
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
@@ -10,23 +11,20 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (status === 'loading') {
-      // Prevent redirect while loading session data
       return;
     }
 
     if (status === 'unauthenticated' || session?.user?.role !== 'admin') {
-      // Redirect to the 404 page if the user is not authenticated or doesn't have the admin role
       router.push('/404');
     }
   }, [status, session, router]);
 
   if (status === 'loading') {
-    // Show loading while session is being fetched
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
-  if (status === 'authenticated' && session?.user?.role === 'admin') {
-    return (
+  return (
+    <Suspense fallback={<Loading />}>
       <div className="min-h-screen flex flex-col justify-center items-center bg-lightCream">
         <h1 className="text-4xl font-extrabold text-darkRed mb-6">Admin Dashboard</h1>
         <div className="space-y-4">
@@ -48,11 +46,8 @@ export default function AdminDashboard() {
           >
             View Messages
           </button>
-          {/* Add more admin buttons here */}
         </div>
       </div>
-    );
-  }
-
-  return null;
+    </Suspense>
+  );
 }

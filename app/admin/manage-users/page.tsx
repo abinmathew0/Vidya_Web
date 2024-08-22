@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Loading from '../../components/Loading';
 
 interface User {
   _id: string;
@@ -109,72 +110,74 @@ export default function ManageUsers() {
     setFilteredUsers(filtered);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loading />;
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-lightCream p-4">
-      <h1 className="text-4xl font-extrabold text-darkRed mb-6">Manage Users</h1>
+    <Suspense fallback={<Loading />}>
+      <div className="min-h-screen flex flex-col items-center bg-lightCream p-4">
+        <h1 className="text-4xl font-extrabold text-darkRed mb-6">Manage Users</h1>
 
-      {notification && (
-        <div className="bg-green-500 text-white p-2 mb-4 rounded">
-          {notification}
+        {notification && (
+          <div className="bg-green-500 text-white p-2 mb-4 rounded">
+            {notification}
+          </div>
+        )}
+
+        <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mb-4">
+          <input
+            type="text"
+            placeholder="Search by email"
+            value={search}
+            onChange={handleSearchChange}
+            className="border border-gray-300 rounded px-3 py-2"
+          />
+          <select
+            value={roleFilter}
+            onChange={handleRoleFilterChange}
+            className="border border-gray-300 rounded px-3 py-2"
+          >
+            <option value="">All Roles</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
         </div>
-      )}
 
-      <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mb-4">
-        <input
-          type="text"
-          placeholder="Search by email"
-          value={search}
-          onChange={handleSearchChange}
-          className="border border-gray-300 rounded px-3 py-2"
-        />
-        <select
-          value={roleFilter}
-          onChange={handleRoleFilterChange}
-          className="border border-gray-300 rounded px-3 py-2"
-        >
-          <option value="">All Roles</option>
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
-
-      <table className="min-w-full bg-white rounded-md shadow-md overflow-hidden">
-        <thead>
-          <tr>
-            <th className="px-4 py-2 text-left text-darkRed">Email</th>
-            <th className="px-4 py-2 text-left text-darkRed">Role</th>
-            <th className="px-4 py-2 text-left text-darkRed">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.map(user => (
-            <tr key={user._id} className="border-b">
-              <td className="px-4 py-2 text-darkRed">{user.email}</td>
-              <td className="px-4 py-2 text-darkRed">
-                <select
-                  value={user.role}
-                  onChange={(e) => handleRoleUpdate(user._id, e.target.value)}
-                  className="border border-gray-300 rounded px-2 py-1"
-                >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </td>
-              <td className="px-4 py-2">
-                <button
-                  onClick={() => handleDelete(user._id)}
-                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </td>
+        <table className="min-w-full bg-white rounded-md shadow-md overflow-hidden">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 text-left text-darkRed">Email</th>
+              <th className="px-4 py-2 text-left text-darkRed">Role</th>
+              <th className="px-4 py-2 text-left text-darkRed">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {filteredUsers.map(user => (
+              <tr key={user._id} className="border-b">
+                <td className="px-4 py-2 text-darkRed">{user.email}</td>
+                <td className="px-4 py-2 text-darkRed">
+                  <select
+                    value={user.role}
+                    onChange={(e) => handleRoleUpdate(user._id, e.target.value)}
+                    className="border border-gray-300 rounded px-2 py-1"
+                  >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </td>
+                <td className="px-4 py-2">
+                  <button
+                    onClick={() => handleDelete(user._id)}
+                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Suspense>
   );
 }
