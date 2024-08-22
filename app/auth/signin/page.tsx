@@ -14,7 +14,7 @@ export default function SignInPage() {
     e.preventDefault();
     const result = await signIn('credentials', {
       redirect: true,
-      email, // Update this to use email instead of username
+      email,
       password,
       callbackUrl: '/'
     });
@@ -55,9 +55,16 @@ export default function SignInPage() {
             required
           />
         </div>
-        <button type="submit" className="bg-darkRed text-lightCream px-4 py-2 rounded hover:bg-burntOrange w-full">
-          Sign In
-        </button>
+        <div className="flex justify-between items-center mb-4">
+          <button type="submit" className="bg-darkRed text-lightCream px-4 py-2 rounded hover:bg-burntOrange w-full">
+            Sign In
+          </button>
+        </div>
+        <div className="text-right">
+          <Link href="/auth/forgot-password" className="text-sm text-darkRed hover:text-burntOrange underline">
+            Forgot Password?
+          </Link>
+        </div>
       </form>
       <p className="mt-4">
         Don't have an account?{' '}

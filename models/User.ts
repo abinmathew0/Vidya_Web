@@ -9,6 +9,8 @@ const UserSchema = new mongoose.Schema({
     default: 'user',
   },
   emailVerified: { type: Boolean, default: false },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);
