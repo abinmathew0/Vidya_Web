@@ -1,5 +1,5 @@
 import { getSession } from 'next-auth/react';
-import { connectToDatabase } from '../../../lib/dbConnect';
+import connectToDatabase  from '../../../lib/dbConnect';
 import Content from '../../../models/Content';
 
 export async function POST(req) {

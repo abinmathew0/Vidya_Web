@@ -40,8 +40,9 @@ export default function ContactPage() {
         <main className="flex-grow flex flex-col justify-center items-center text-center p-8 pt-24">
           <h1 className="text-5xl font-extrabold text-darkRed mb-6">Contact Me</h1>
           <p className="text-lg text-burntOrange max-w-3xl mb-6">
-            I'd love to hear from you! Whether you have a question, a project in mind, or just want to connect, feel free to reach out using the form below.
-          </p>
+  I&#39;d love to hear from you! Whether you have a question, a project in mind, or just want to connect, feel free to reach out using the form below.
+</p>
+
           <form onSubmit={handleSubmit} className="w-full max-w-md">
             {status && <p className="mb-4 text-darkRed">{status}</p>}
             <div className="mb-4">

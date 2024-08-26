@@ -23,16 +23,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  // Convert the Request object to one that getServerSession can use
-  const session = await getServerSession({
-    req: {
-      headers: Object.fromEntries(req.headers),
-      cookies: Object.fromEntries(req.headers.get('cookie')?.split('; ').map(cookie => cookie.split('=')) || []),
-    },
-    ...authOptions,
-  });
+  const session = await getServerSession({ req: req as any, ...authOptions });
 
-  if (!session || session.user.role !== 'admin') {
+  if (!session || session.user?.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

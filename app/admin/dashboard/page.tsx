@@ -10,9 +10,7 @@ export default function AdminDashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === 'loading') {
-      return;
-    }
+    if (status === 'loading') return;
 
     if (status === 'unauthenticated' || session?.user?.role !== 'admin') {
       router.push('/404');
@@ -30,19 +28,19 @@ export default function AdminDashboard() {
         <div className="space-y-4">
           <button
             onClick={() => router.push('/admin/manage-users')}
-            className="bg-darkRed text-lightCream mr-2 px-4 py-2 rounded hover:bg-burntOrange transition duration-300"
+            className="bg-darkRed mr-4 text-lightCream px-4 py-2 rounded hover:bg-burntOrange transition duration-300"
           >
             Manage Users
           </button>
           <button
             onClick={() => router.push('/admin/articles')}
-            className="bg-darkRed text-lightCream mr-2 px-4 py-2 rounded hover:bg-burntOrange transition duration-300"
+            className="bg-darkRed mr-4 text-lightCream px-4 py-2 rounded hover:bg-burntOrange transition duration-300"
           >
             Manage Articles
           </button>
           <button
             onClick={() => router.push('/admin/messages')}
-            className="bg-darkRed text-lightCream mr-2 px-4 py-2 rounded hover:bg-burntOrange transition duration-300"
+            className="bg-darkRed mr-4 text-lightCream px-4 py-2 rounded hover:bg-burntOrange transition duration-300"
           >
             View Messages
           </button>

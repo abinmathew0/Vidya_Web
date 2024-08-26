@@ -3,8 +3,15 @@
 import { useEffect, useState, Suspense } from 'react';
 import Loading from '../../components/Loading';
 
+interface Message {
+  name: string;
+  email: string;
+  message: string;
+  createdAt: string;
+}
+
 export default function AdminMessagesPage() {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     const fetchMessages = async () => {

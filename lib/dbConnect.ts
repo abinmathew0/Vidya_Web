@@ -1,26 +1,40 @@
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+interface MongooseCache {
+  conn: Mongoose | null;
+  promise: Promise<Mongoose> | null;
 }
 
-async function connectToDatabase() {
+declare global {
+  // This keeps the cache persistent across hot reloads
+  var mongoose: MongooseCache;
+}
+
+let cached: MongooseCache;
+
+if (!global.mongoose) {
+  global.mongoose = { conn: null, promise: null };
+}
+
+cached = global.mongoose;
+
+async function connectToDatabase(): Promise<Mongoose> {
   if (cached.conn) {
     return cached.conn;
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(process.env.MONGODB_URI, {
-      bufferCommands: false,
-    }).then((mongoose) => {
-      return mongoose;
-    });
+    cached.promise = mongoose
+      .connect(process.env.MONGODB_URI as string, {
+        bufferCommands: false,
+      })
+      .then((mongoose) => {
+        return mongoose;
+      });
   }
 
   cached.conn = await cached.promise;
   return cached.conn;
 }
 
-export default connectToDatabase; 
+export default connectToDatabase;

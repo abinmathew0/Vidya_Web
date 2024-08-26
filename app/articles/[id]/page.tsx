@@ -74,12 +74,12 @@ export default function Article() {
 
   return (
     <div className="container mx-auto p-4 bg-lightCream mt-16 flex justify-center"> {/* Centering the content */}
-      <div className="w-full lg:w-8/12 xl:w-7/12"> {/* 70% width on larger screens */}
-        <h1 className="text-4xl font-extrabold text-darkRed mb-6">{article.frontmatter.title}</h1>
+      <div className="w-full lg:w-8/12 xl:w-7/12 space-y-6"> {/* 70% width on larger screens */}
+        <h1 className="text-4xl font-extrabold text-darkRed mb-4">{article.frontmatter.title}</h1>
         <p className="mb-4 text-burntOrange">{article.frontmatter.date}</p>
         <div className="prose lg:prose-xl text-darkRed" dangerouslySetInnerHTML={{ __html: article.content }} />
 
-        <div className="mt-8">
+        <div className="mt-6">
           <LikeButton initialLikes={0} />
         </div>
 

@@ -5,7 +5,6 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
-// Utility function to handle file operations
 const getArticlePath = (slug: string) => path.join('content/articles', `${slug}.md`);
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
@@ -27,10 +26,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
-  // Extract session using the getServerSession by providing headers.
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession({ req: request, ...authOptions });
 
-  if (!session || session.user.role !== 'admin') {
+  if (!session || session.user?.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -53,9 +51,9 @@ ${content}`;
 }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession({ req: request, ...authOptions });
 
-  if (!session || session.user.role !== 'admin') {
+  if (!session || session.user?.role !== 'admin') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

@@ -12,7 +12,7 @@ export default function EditArticle() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!session || session.user.role !== 'admin') {
+    if (!session?.user || session.user.role !== 'admin') {
       router.push('/auth/signin');
     } else {
       fetch(`/api/articles/${slug}`)
@@ -28,7 +28,7 @@ export default function EditArticle() {
     e.preventDefault();
 
     const res = await fetch(`/api/articles/${slug}`, {
-      method: 'POST', // Alternatively, use PUT if you distinguish between creation and updates in your API
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -42,7 +42,7 @@ export default function EditArticle() {
     }
   };
 
-  if (!session || session.user.role !== 'admin') {
+  if (!session?.user || session.user.role !== 'admin') {
     return <p>Unauthorized</p>;
   }
 

@@ -23,13 +23,13 @@ export default function NewArticle() {
     });
 
     if (res.ok) {
-      router.push('/admin/articles'); // Redirect back to article management after successful creation
+      router.push('/admin/articles');
     } else {
       console.error('Failed to create article');
     }
   };
 
-  if (!session || session.user.role !== 'admin') {
+  if (!session?.user || session.user.role !== 'admin') {
     return <p>Unauthorized</p>;
   }
 

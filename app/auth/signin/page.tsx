@@ -68,12 +68,12 @@ export default function SignInPage() {
             </Link>
           </div>
         </form>
-        <p className="mt-4">
-          Don't have an account?{' '}
-          <Link href="/auth/signup" className="text-darkRed hover:text-burntOrange underline">
-            Sign Up
-          </Link>
-        </p>
+       <p className="mt-4">
+  Don&#39;t have an account?{' '}
+  <Link href="/auth/signup" className="text-darkRed hover:text-burntOrange underline">
+    Sign Up
+  </Link>
+</p>
         <div className="mt-6 space-y-2 w-full max-w-sm">
           <button
             onClick={() => signIn('google')}
@@ -104,3 +104,4 @@ export default function SignInPage() {
     </Suspense>
   );
 }
+  

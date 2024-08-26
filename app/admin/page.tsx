@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export default function AdminPage() {
   const { data: session } = useSession();
@@ -12,12 +12,12 @@ export default function AdminPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (session && session.user.role !== 'admin') {
+    if (session?.user && session.user.role !== 'admin') {
       router.push('/');
     }
-  }, [session]);
+  }, [session, router]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
@@ -33,12 +33,12 @@ export default function AdminPage() {
 
       setTitle('');
       setContent('');
-    } catch (error) {
+    } catch (error: any) {
       setError(error.message);
     }
   };
 
-  if (!session || session.user.role !== 'admin') {
+  if (!session?.user || session.user.role !== 'admin') {
     return <p>Loading...</p>;
   }
 
