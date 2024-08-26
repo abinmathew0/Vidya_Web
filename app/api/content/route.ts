@@ -1,12 +1,14 @@
-import { getSession } from 'next-auth/react';
-import connectToDatabase  from '../../../lib/dbConnect';
+import { getServerSession } from 'next-auth/next';
+import { NextRequest, NextResponse } from 'next/server';
+import { authOptions } from '../../../lib/authOptions'; // Update the path based on your project structure
+import connectToDatabase from '../../../lib/dbConnect';
 import Content from '../../../models/Content';
 
-export async function POST(req) {
-  const session = await getSession({ req });
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== 'admin') {
-    return new Response(JSON.stringify({ message: 'Forbidden' }), { status: 403 });
+    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
   }
 
   await connectToDatabase();
@@ -16,5 +18,5 @@ export async function POST(req) {
   const newContent = new Content({ title, content });
   await newContent.save();
 
-  return new Response(JSON.stringify(newContent), { status: 201 });
+  return NextResponse.json(newContent, { status: 201 });
 }

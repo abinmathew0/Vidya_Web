@@ -8,6 +8,9 @@ interface Article {
   slug: string;
   title: string;
   date: string;
+  author: string;
+  likes: number;
+  commentsCount: number;
   excerpt: string;
 }
 
@@ -28,6 +31,9 @@ export default function Articles() {
               slug={article.slug}
               title={article.title}
               date={article.date}
+              author={article.author}
+              likes={article.likes}
+              commentsCount={article.commentsCount}
               excerpt={article.excerpt}
             />
           </Link>
@@ -51,6 +57,9 @@ function getArticles(): Article[] {
         slug: filename.replace('.md', ''),
         title: frontmatter.title,
         date: frontmatter.date,
+        author: frontmatter.author || 'Unknown Author', // Handle missing author
+        likes: frontmatter.likes || 0, // Handle missing likes
+        commentsCount: frontmatter.commentsCount || 0, // Handle missing commentsCount
         excerpt,
       };
     });

@@ -5,7 +5,14 @@ import User from '../../../../models/User';
 export async function GET(req: Request) {
   try {
     await connectToDatabase();
-    const token = req.nextUrl.searchParams.get('token');
+
+    // Use the URL constructor to parse the request URL and retrieve the token
+    const url = new URL(req.url);
+    const token = url.searchParams.get('token');
+
+    if (!token) {
+      return NextResponse.json({ message: 'Token is missing' }, { status: 400 });
+    }
 
     const user = await User.findOne({ _id: token });
 

@@ -22,10 +22,13 @@ export default function Article() {
   const [article, setArticle] = useState<ArticleProps | null>(null);
   const [comments, setComments] = useState<{ id: string; text: string; author: string }[]>([]);
 
+  // Ensure id is a string, even if useParams returns a string[]
+  const articleId = Array.isArray(id) ? id[0] : id;
+
   useEffect(() => {
     // Fetch article data
     const fetchArticle = async () => {
-      const res = await fetch(`/api/articles/${id}`);
+      const res = await fetch(`/api/articles/${articleId}`);
       const data = await res.json();
 
       if (res.ok) {
@@ -39,14 +42,14 @@ export default function Article() {
 
     // Fetch comments
     const fetchComments = async () => {
-      const res = await fetch(`/api/comments/${id}`);
+      const res = await fetch(`/api/comments/${articleId}`);
       const data = await res.json();
       setComments(data);
     };
 
     fetchArticle();
     fetchComments();
-  }, [id]);
+  }, [articleId]);
 
   const handleCommentSubmit = async (comment: string) => {
     if (session) {
@@ -56,7 +59,7 @@ export default function Article() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          articleId: id,
+          articleId,
           comment,
         }),
       });
@@ -80,7 +83,7 @@ export default function Article() {
         <div className="prose lg:prose-xl text-darkRed" dangerouslySetInnerHTML={{ __html: article.content }} />
 
         <div className="mt-6">
-          <LikeButton initialLikes={0} />
+          <LikeButton initialLikes={0} articleId={articleId} /> 
         </div>
 
         <div className="mt-8">

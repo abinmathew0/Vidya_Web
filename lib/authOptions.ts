@@ -29,11 +29,11 @@ export const authOptions: NextAuthOptions = {
       sendVerificationRequest: async ({ identifier: email, url, provider }) => {
         const { host } = new URL(url);
         const transport = nodemailer.createTransport({
-          host: provider.server.host,
-          port: provider.server.port,
+          host: process.env.EMAIL_SERVER_HOST || '',
+          port: Number(process.env.EMAIL_SERVER_PORT) || 587,
           auth: {
-            user: provider.server.auth.user,
-            pass: provider.server.auth.pass,
+            user: process.env.EMAIL_SERVER_USER || '',
+            pass: process.env.EMAIL_SERVER_PASSWORD || '',
           },
         });
 
@@ -133,3 +133,5 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET || '',
 };
+
+export default authOptions;

@@ -9,7 +9,7 @@ import Loading from '../../components/Loading';
 export default function SignInPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null); // Update the type to string | null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +21,7 @@ export default function SignInPage() {
     });
 
     if (result?.error) {
-      setError(result.error);
+      setError(result.error); // Now, this correctly accepts a string
     }
   };
 
@@ -68,12 +68,12 @@ export default function SignInPage() {
             </Link>
           </div>
         </form>
-       <p className="mt-4">
-  Don&#39;t have an account?{' '}
-  <Link href="/auth/signup" className="text-darkRed hover:text-burntOrange underline">
-    Sign Up
-  </Link>
-</p>
+        <p className="mt-4">
+          Don&#39;t have an account?{' '}
+          <Link href="/auth/signup" className="text-darkRed hover:text-burntOrange underline">
+            Sign Up
+          </Link>
+        </p>
         <div className="mt-6 space-y-2 w-full max-w-sm">
           <button
             onClick={() => signIn('google')}
@@ -104,4 +104,3 @@ export default function SignInPage() {
     </Suspense>
   );
 }
-  
