@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
 import GoogleProvider from 'next-auth/providers/google';
 import InstagramProvider from 'next-auth/providers/instagram';
@@ -12,7 +12,8 @@ import connectToDatabase from '../../../../lib/dbConnect';
 import User from '../../../../models/User';
 import bcrypt from 'bcrypt';
 
-export const authOptions: NextAuthOptions = {
+// NextAuth configuration object
+const authOptions = {
   providers: [
     EmailProvider({
       server: {
@@ -35,13 +36,23 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
-        await transport.sendMail({
-          to: email,
-          from: provider.from,
-          subject: `Verify your email for ${host}`,
-          text: `Please verify your email address for ${host}\n${url}\n\n`,
-          html: `<p>Verify your email address for ${host}</p><p><a href="${url}">Click here to verify your email</a></p>`,
-        });
+        console.log('Attempting to send verification email to:', email);
+        console.log('Email URL:', url);
+
+        await transport
+          .sendMail({
+            to: email,
+            from: provider.from,
+            subject: `Verify your email for ${host}`,
+            text: `Please verify your email address for ${host}\n${url}\n\n`,
+            html: `<p>Verify your email address for ${host}</p><p><a href="${url}">Click here to verify your email</a></p>`,
+          })
+          .then((info) => {
+            console.log('Email sent successfully:', info.response);
+          })
+          .catch((error) => {
+            console.error('Error sending email:', error);
+          });
       },
     }),
     GoogleProvider({
@@ -124,4 +135,5 @@ export const authOptions: NextAuthOptions = {
 
 const handler = NextAuth(authOptions);
 
+// Correctly exporting the handler for the route
 export { handler as GET, handler as POST };
